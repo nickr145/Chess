@@ -4,7 +4,6 @@ import random
 
 from data.classes.TitleScreen import TitleScreen
 from data.classes.Board import Board
-# Other imports like Piece, Square, etc.
 
 # Initialize pygame
 pygame.init()
