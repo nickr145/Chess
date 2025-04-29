@@ -1,36 +1,28 @@
-# Level2Computer.py
-
 import random
-from Computer import Computer
+from data.classes.computers.Computer import Computer
 
 class Level2Computer(Computer):
     def make_move(self, board):
-        """Level 2 AI: Capture enemy pieces if possible, otherwise random move."""
+        """Level 2 AI: Prefer captures if possible."""
         capture_moves = []
-        regular_moves = []
+        normal_moves = []
 
-        for row in board.squares:
-            for square in row:
-                piece = square.piece
-                if piece and piece.color == self.color:
-                    valid_moves = piece.get_valid_moves(board)
-                    for move in valid_moves:
-                        target_row, target_col = move
-                        target_square = board.squares[target_row][target_col]
-                        if target_square.piece and target_square.piece.color != self.color:
-                            # Capture move available
-                            capture_moves.append((piece, move))
-                        else:
-                            regular_moves.append((piece, move))
+        for square in board.squares:
+            piece = square.occupying_piece
+            if piece and piece.color == self.color:
+                valid_moves = piece.get_valid_moves(board)
+                for move in valid_moves:
+                    if move.occupying_piece and move.occupying_piece.color != self.color:
+                        capture_moves.append((piece, move))
+                    else:
+                        normal_moves.append((piece, move))
 
         if capture_moves:
-            # Prioritize capturing
-            piece, move = random.choice(capture_moves)
-        elif regular_moves:
-            # No captures, fallback to random
-            piece, move = random.choice(regular_moves)
+            piece, move_square = random.choice(capture_moves)
+        elif normal_moves:
+            piece, move_square = random.choice(normal_moves)
         else:
-            # No possible moves
+            print("No moves available for computer.")
             return
 
-        board.move_piece(piece, move[0], move[1])
+        piece.move(board, move_square, force=True)

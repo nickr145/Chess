@@ -39,9 +39,12 @@ class Board:
         return output
 
     def get_square_from_pos(self, pos):
-        for square in self.squares:
-            if (square.x, square.y) == (pos[0], pos[1]):
-                return square
+        x, y = pos
+        if 0 <= x < 8 and 0 <= y < 8:
+            for square in self.squares:
+                if (square.x, square.y) == (pos[0], pos[1]):
+                    return square
+        return None
 
     def get_piece_from_pos(self, pos):
         return self.get_square_from_pos(pos).occupying_piece
@@ -78,20 +81,37 @@ class Board:
                             (x, y), 'white' if piece[0] == 'w' else 'black', self
                         )
                         
-    
     def handle_click(self, mx, my):
         x = mx // self.tile_width
         y = my // self.tile_height
         clicked_square = self.get_square_from_pos((x, y))
+        
         if self.selected_piece is None:
             if clicked_square.occupying_piece is not None:
                 if clicked_square.occupying_piece.color == self.turn:
                     self.selected_piece = clicked_square.occupying_piece
         elif self.selected_piece.move(self, clicked_square):
             self.turn = 'white' if self.turn == 'black' else 'black'
+            return True  # <- Successfully moved!
         elif clicked_square.occupying_piece is not None:
             if clicked_square.occupying_piece.color == self.turn:
                 self.selected_piece = clicked_square.occupying_piece
+
+        return False  # <- No move happened
+
+    # def handle_click(self, mx, my):
+    #     x = mx // self.tile_width
+    #     y = my // self.tile_height
+    #     clicked_square = self.get_square_from_pos((x, y))
+    #     if self.selected_piece is None:
+    #         if clicked_square.occupying_piece is not None:
+    #             if clicked_square.occupying_piece.color == self.turn:
+    #                 self.selected_piece = clicked_square.occupying_piece
+    #     elif self.selected_piece.move(self, clicked_square):
+    #         self.turn = 'white' if self.turn == 'black' else 'black'
+    #     elif clicked_square.occupying_piece is not None:
+    #         if clicked_square.occupying_piece.color == self.turn:
+    #             self.selected_piece = clicked_square.occupying_piece
             
     # check state checker
     def is_in_check(self, color, board_change=None): # board_change = [(x1, y1), (x2, y2)]

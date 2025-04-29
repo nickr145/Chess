@@ -13,27 +13,50 @@ class Knight(Piece):
 
     def get_possible_moves(self, board):
         output = []
+
+        # Knight L-shaped moves
         moves = [
-            (1, -2),
-            (2, -1),
-            (2, 1),
-            (1, 2),
-            (-1, 2),
-            (-2, 1),
-            (-2, -1),
-            (-1, -2)
+            (self.x + 1, self.y + 2),
+            (self.x + 2, self.y + 1),
+            (self.x + 2, self.y - 1),
+            (self.x + 1, self.y - 2),
+            (self.x - 1, self.y - 2),
+            (self.x - 2, self.y - 1),
+            (self.x - 2, self.y + 1),
+            (self.x - 1, self.y + 2),
         ]
-        for move in moves:
-            new_pos = (self.x + move[0], self.y + move[1])
-            if (
-                new_pos[0] < 8 and
-                new_pos[0] >= 0 and 
-                new_pos[1] < 8 and 
-                new_pos[1] >= 0
-            ):
-                output.append([
-                    board.get_square_from_pos(
-                        new_pos
-                    )
-                ])
+
+        for (x, y) in moves:
+            square = board.get_square_from_pos((x, y))
+            if square:
+                output.append([square])
+
         return output
+
+
+    # def get_possible_moves(self, board):
+    #     output = []
+    #     moves = [
+    #         (1, -2),
+    #         (2, -1),
+    #         (2, 1),
+    #         (1, 2),
+    #         (-1, 2),
+    #         (-2, 1),
+    #         (-2, -1),
+    #         (-1, -2)
+    #     ]
+    #     for move in moves:
+    #         new_pos = (self.x + move[0], self.y + move[1])
+    #         if (
+    #             new_pos[0] < 8 and
+    #             new_pos[0] >= 0 and 
+    #             new_pos[1] < 8 and 
+    #             new_pos[1] >= 0
+    #         ):
+    #             output.append([
+    #                 board.get_square_from_pos(
+    #                     new_pos
+    #                 )
+    #             ])
+    #     return output
