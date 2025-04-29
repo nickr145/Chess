@@ -1,20 +1,23 @@
-# Level1Computer.py
 import random
-from Computer import Computer
+from data.classes.computers.Computer import Computer
 
 class Level1Computer(Computer):
     def make_move(self, board):
-        """Level 1 AI: Randomly picks a move."""
         all_moves = []
 
-        for row in board.squares:
-            for square in row:
-                piece = square.piece
-                if piece and piece.color == self.color:
-                    valid_moves = piece.get_valid_moves(board)
-                    for move in valid_moves:
-                        all_moves.append((piece, move))
+        for square in board.squares:
+            piece = square.occupying_piece
+            if piece and piece.color == self.color:
+                valid_moves = piece.get_valid_moves(board)
+                # print(f"{piece.__class__.__name__} at {piece.pos} has {len(valid_moves)} moves.")
+
+                for move in valid_moves:
+                    all_moves.append((piece, move))
+
+        # print(f"Computer possible moves: {len(all_moves)}")  # Debugging output
 
         if all_moves:
-            piece, move = random.choice(all_moves)
-            board.move_piece(piece, move[0], move[1])
+            piece, move_square = random.choice(all_moves)
+            piece.move(board, move_square, force=True)
+        else:
+            print("No moves available for computer.")

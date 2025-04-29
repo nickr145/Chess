@@ -13,36 +13,61 @@ class Bishop(Piece):
 
     def get_possible_moves(self, board):
         output = []
-        moves_ne = []
-        for i in range(1, 8):
-            if self.x + i > 7 or self.y - i < 0:
-                break
-            moves_ne.append(board.get_square_from_pos(
-                (self.x + i, self.y - i)
-            ))
-        output.append(moves_ne)
-        moves_se = []
-        for i in range(1, 8):
-            if self.x + i > 7 or self.y + i > 7:
-                break
-            moves_se.append(board.get_square_from_pos(
-                (self.x + i, self.y + i)
-            ))
-        output.append(moves_se)
-        moves_sw = []
-        for i in range(1, 8):
-            if self.x - i < 0 or self.y + i > 7:
-                break
-            moves_sw.append(board.get_square_from_pos(
-                (self.x - i, self.y + i)
-            ))
-        output.append(moves_sw)
-        moves_nw = []
-        for i in range(1, 8):
-            if self.x - i < 0 or self.y - i < 0:
-                break
-            moves_nw.append(board.get_square_from_pos(
-                (self.x - i, self.y - i)
-            ))
-        output.append(moves_nw)
+
+        # Directions: diagonals
+        directions = [(1, 1), (1, -1), (-1, 1), (-1, -1)]
+
+        for dx, dy in directions:
+            path = []
+            x, y = self.x, self.y
+
+            while True:
+                x += dx
+                y += dy
+                square = board.get_square_from_pos((x, y))
+                if square is None:
+                    break
+                path.append(square)
+                if square.occupying_piece is not None:
+                    break
+
+            output.append(path)
+
         return output
+
+
+    # def get_possible_moves(self, board):
+    #     output = []
+    #     moves_ne = []
+    #     for i in range(1, 8):
+    #         if self.x + i > 7 or self.y - i < 0:
+    #             break
+    #         moves_ne.append(board.get_square_from_pos(
+    #             (self.x + i, self.y - i)
+    #         ))
+    #     output.append(moves_ne)
+    #     moves_se = []
+    #     for i in range(1, 8):
+    #         if self.x + i > 7 or self.y + i > 7:
+    #             break
+    #         moves_se.append(board.get_square_from_pos(
+    #             (self.x + i, self.y + i)
+    #         ))
+    #     output.append(moves_se)
+    #     moves_sw = []
+    #     for i in range(1, 8):
+    #         if self.x - i < 0 or self.y + i > 7:
+    #             break
+    #         moves_sw.append(board.get_square_from_pos(
+    #             (self.x - i, self.y + i)
+    #         ))
+    #     output.append(moves_sw)
+    #     moves_nw = []
+    #     for i in range(1, 8):
+    #         if self.x - i < 0 or self.y - i < 0:
+    #             break
+    #         moves_nw.append(board.get_square_from_pos(
+    #             (self.x - i, self.y - i)
+    #         ))
+    #     output.append(moves_nw)
+    #     return output

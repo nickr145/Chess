@@ -12,64 +12,103 @@ class Pawn(Piece):
 
     def get_possible_moves(self, board):
         output = []
-        moves = []
-        # move forward
-        if self.color == 'white':
-            moves.append((0, -1))
-            if not self.has_moved:
-                moves.append((0, -2))
-        elif self.color == 'black':
-            moves.append((0, 1))
-            if not self.has_moved:
-                moves.append((0, 2))
-        for move in moves:
-            new_pos = (self.x, self.y + move[1])
-            if new_pos[1] < 8 and new_pos[1] >= 0:
-                output.append(
-                    board.get_square_from_pos(new_pos)
-                )
+
+        direction = -1 if self.color == 'white' else 1
+        start_row = 6 if self.color == 'white' else 1
+
+        # Move one square forward
+        forward_square = board.get_square_from_pos((self.x, self.y + direction))
+        if forward_square and forward_square.occupying_piece is None:
+            output.append([forward_square])
+
+            # Move two squares forward if at starting position
+            if self.y == start_row:
+                two_forward = board.get_square_from_pos((self.x, self.y + 2 * direction))
+                if two_forward and two_forward.occupying_piece is None:
+                    output.append([two_forward])
+
+        # Capture diagonally
+        for dx in [-1, 1]:
+            diag_square = board.get_square_from_pos((self.x + dx, self.y + direction))
+            if diag_square and diag_square.occupying_piece and diag_square.occupying_piece.color != self.color:
+                output.append([diag_square])
+
         return output
 
-    def get_moves(self, board):
-        output = []
-        for square in self.get_possible_moves(board):
-            if square.occupying_piece != None:
-                break
-            else:
-                output.append(square)
-        if self.color == 'white':
-            if self.x + 1 < 8 and self.y - 1 >= 0:
-                square = board.get_square_from_pos(
-                    (self.x + 1, self.y - 1)
-                )
-                if square.occupying_piece != None:
-                    if square.occupying_piece.color != self.color:
-                        output.append(square)
-            if self.x - 1 >= 0 and self.y - 1 >= 0:
-                square = board.get_square_from_pos(
-                    (self.x - 1, self.y - 1)
-                )
-                if square.occupying_piece != None:
-                    if square.occupying_piece.color != self.color:
-                        output.append(square)
-        elif self.color == 'black':
-            if self.x + 1 < 8 and self.y + 1 < 8:
-                square = board.get_square_from_pos(
-                    (self.x + 1, self.y + 1)
-                )
-                if square.occupying_piece != None:
-                    if square.occupying_piece.color != self.color:
-                        output.append(square)
-            if self.x - 1 >= 0 and self.y + 1 < 8:
-                square = board.get_square_from_pos(
-                    (self.x - 1, self.y + 1)
-                )
-                if square.occupying_piece != None:
-                    if square.occupying_piece.color != self.color:
-                        output.append(square)
-        return output
+    # def get_possible_moves(self, board):
+    #     output = []
+    #     moves = []
+    #     # move forward
+    #     if self.color == 'white':
+    #         moves.append((0, -1))
+    #         if not self.has_moved:
+    #             moves.append((0, -2))
+    #     elif self.color == 'black':
+    #         moves.append((0, 1))
+    #         if not self.has_moved:
+    #             moves.append((0, 2))
+    #     for move in moves:
+    #         new_pos = (self.x, self.y + move[1])
+    #         if new_pos[1] < 8 and new_pos[1] >= 0:
+    #             output.append(
+    #                 board.get_square_from_pos(new_pos)
+    #             )
+    #     return output
 
     def attacking_squares(self, board):
-        moves = self.get_moves(board)
-        # return the diagonal moves 
-        return [i for i in moves if i.x != self.x]
+        output = []
+
+        direction = -1 if self.color == 'white' else 1
+
+        for dx in [-1, 1]:  # Diagonal left and right
+            x = self.x + dx
+            y = self.y + direction
+            square = board.get_square_from_pos((x, y))
+            if square:
+                output.append(square)
+
+        return output
+
+    # def get_moves(self, board):
+    #     output = []
+    #     for square in self.get_possible_moves(board):
+    #         if square.occupying_piece != None:
+    #             break
+    #         else:
+    #             output.append(square)
+    #     if self.color == 'white':
+    #         if self.x + 1 < 8 and self.y - 1 >= 0:
+    #             square = board.get_square_from_pos(
+    #                 (self.x + 1, self.y - 1)
+    #             )
+    #             if square.occupying_piece != None:
+    #                 if square.occupying_piece.color != self.color:
+    #                     output.append(square)
+    #         if self.x - 1 >= 0 and self.y - 1 >= 0:
+    #             square = board.get_square_from_pos(
+    #                 (self.x - 1, self.y - 1)
+    #             )
+    #             if square.occupying_piece != None:
+    #                 if square.occupying_piece.color != self.color:
+    #                     output.append(square)
+    #     elif self.color == 'black':
+    #         if self.x + 1 < 8 and self.y + 1 < 8:
+    #             square = board.get_square_from_pos(
+    #                 (self.x + 1, self.y + 1)
+    #             )
+    #             if square.occupying_piece != None:
+    #                 if square.occupying_piece.color != self.color:
+    #                     output.append(square)
+    #         if self.x - 1 >= 0 and self.y + 1 < 8:
+    #             square = board.get_square_from_pos(
+    #                 (self.x - 1, self.y + 1)
+    #             )
+    #             if square.occupying_piece != None:
+    #                 if square.occupying_piece.color != self.color:
+    #                     output.append(square)
+    #     return output
+
+    # def attacking_squares(self, board):
+    #     moves = self.get_moves(board)
+    #     # return the diagonal moves 
+    #     return [i for i in moves if i.x != self.x]
